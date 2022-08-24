@@ -23,7 +23,7 @@
             </template>
           </el-upload>
           <el-button>数据预览</el-button>
-          <el-button type="primary" @click="getItems()">提交</el-button>
+          <el-button type="primary" @click="test">提交</el-button>
         </el-card>
 
       </el-col>
@@ -34,7 +34,7 @@
               <span>项目控制</span>
             </div>
           </template>
-          <el-transfer v-model="value" :data="data" :titles="['进行中项目', '已完成项目']" />
+          <el-transfer v-model="value" :data="data" :titles="['进行中项目', '已完成项目']" @change='changeItems' />
         </el-card>
       </el-col>
     </el-row>
@@ -56,20 +56,57 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { itemsApi } from "../../util/request";
+import { useStore } from "vuex";
 
+const store = useStore();
+// 获取项目
+const aa = ref(null);
 const generateData = () => {
   const data = [];
-  for (let i = 1; i <= 15; i++) {
+  for (let i in aa.value) {
     data.push({
-      key: i,
-      label: `Option ${i}`,
-      disabled: i % 4 === 0,
+      key: aa.value[i].itemName,
+      label: aa.value[i].itemName,
+      // disabled: i % 4 === 0,
     });
   }
   return data;
 };
+watch(
+  () => store.getters.getItems,
+  (count, prevCount) => {
+    aa.value = count;
+    data.value = generateData()
+  }
+);
+// 
+function test(){
+  store.commit('addItems')
+}
+
+function csvToJson(filePath) {
+  let result = []
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", filePath, false);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        result = csvJSON(xhr.responseText)
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.send(null);
+  return result
+}
+
+
+function changeItems() {
+  console.log(value);
+}
 
 const data = ref(generateData());
 const value = ref([]);
@@ -99,8 +136,7 @@ const options = [
     label: "Option5",
   },
 ];
-
-
+const input =ref('')
 </script>
 
 <style lang="less" scope>

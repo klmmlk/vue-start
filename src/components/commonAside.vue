@@ -36,14 +36,14 @@ import { computed } from "@vue/runtime-core";
 import { itemsApi } from "../util/request";
 const router = useRouter();
 const store = useStore();
-
+// 获取items数据并提交到目录和itemsdata中
 itemsApi().then((res) => {
   if (res.code == 20000) {
-    // console.log("返回值", res.data);
-    store.commit('setItems',res.data)
-    // console.log(res.data);
+    // console.log(typeof res.data);
+    store.dispatch('setItems',res.data)
+    
     // console.log(store.state.items.itemData);
-    store.commit('setChildMenu',res.data)
+    // store.commit('setChildMenu',res.data)
   }
 });
 
