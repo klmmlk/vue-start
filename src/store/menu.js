@@ -36,7 +36,7 @@ export default {
             state.isCollapse = !state.isCollapse
         },
         setChildMenu(state, data) {
-            data = data.itemsData
+            // console.log(data);
             const childMenu = state.menu.filter((item) => item.children)[0]
             for (const key in data) {
                 childMenu.children.push(
@@ -49,5 +49,8 @@ export default {
                 )
             }
         }
+
+
+
     }
 }

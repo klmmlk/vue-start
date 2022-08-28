@@ -5,8 +5,8 @@ import itemsApi from './mockServerData/items'
 Mock.mock('/api/login', loginApi.getLoginRes)
 
 Mock.mock('/api/items', itemsApi.getItemsData)
-Mock.mock('/api/itemslist', itemsApi.getItemsList)
-
+// Mock.mock('/api/itemslist', itemsApi.getItemsList)
+Mock.mock('/api/itemschange', itemsApi.itemsChange)
 Mock.setup({
     timeout: 1000
 })

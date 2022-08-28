@@ -32,9 +32,13 @@
           <template #header>
             <div class="card-header">
               <span>项目控制</span>
+              <el-button type="primary" @click="changeItemsActivate">提交</el-button>
             </div>
+
           </template>
+
           <el-transfer v-model="value" :data="data" :titles="['进行中项目', '已完成项目']" @change='changeItems' />
+
         </el-card>
       </el-col>
     </el-row>
@@ -59,57 +63,51 @@
 import { ref, watch } from "vue";
 import { itemsApi } from "../../util/request";
 import { useStore } from "vuex";
-
+import { itemsChange } from "../../util/request";
 const store = useStore();
 // 获取项目
-const aa = ref(null);
+
+const value = ref([]);
+const itemsdata = ref(store.getters.getItems);
 const generateData = () => {
   const data = [];
-  for (let i in aa.value) {
+  // console.log(itemsdata);
+  for (let i in itemsdata.value) {
     data.push({
-      key: aa.value[i].itemName,
-      label: aa.value[i].itemName,
-      // disabled: i % 4 === 0,
+      key: itemsdata.value[i].itemName,
+      label: itemsdata.value[i].itemName,
     });
+    if (!itemsdata.value[i].activate) {
+      value.value.push(itemsdata.value[i].itemName);
+    }
+    // console.log(itemsdata.value[i].activate);
   }
   return data;
 };
+const data = ref(generateData());
+
 watch(
   () => store.getters.getItems,
   (count, prevCount) => {
-    aa.value = count;
-    data.value = generateData()
+    itemsdata.value = count;
+    data.value = generateData();
   }
 );
-// 
-function test(){
-  store.commit('addItems')
+//
+function test() {
+  store.commit("addItems");
 }
-
-function csvToJson(filePath) {
-  let result = []
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", filePath, false);
-  xhr.onload = function (e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        result = csvJSON(xhr.responseText)
-      } else {
-        console.error(xhr.statusText);
-      }
-    }
-  };
-  xhr.send(null);
-  return result
-}
-
 
 function changeItems() {
-  console.log(value);
+  // console.log(value);
 }
-
-const data = ref(generateData());
-const value = ref([]);
+function changeItemsActivate() {
+  itemsChange(value.value).then((res) => {
+    if (res.code == 20000) {
+      console.log(store.state.items.itemData);
+    }
+  });
+}
 
 const value1 = ref([]);
 const value2 = ref([]);
@@ -136,7 +134,7 @@ const options = [
     label: "Option5",
   },
 ];
-const input =ref('')
+const input = ref("");
 </script>
 
 <style lang="less" scope>

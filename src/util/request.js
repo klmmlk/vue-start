@@ -12,3 +12,9 @@ export const itemsApi = () => {
         // data
     })
 }
+export const itemsChange = data=>{
+    return post({
+        url:'/itemschange',
+        data
+    })
+}
